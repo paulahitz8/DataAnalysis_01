@@ -9,11 +9,12 @@ public class Player
     public string Name;
     public string Country;
     public DateTime Date;
+    public int PlayerID;
     public string Php = "AddPlayer.php";
 
     public string GetData()
     {
-        return "?Name=" + Name + "&Country=" + Country + "&Date=" + Date.ToString();
+        return "?Name=" + Name + "&Country=" + Country + "&Date=" + Date.ToString("yyyy-MM-dd HH:mm:ss");
     }
 }
 
@@ -36,7 +37,7 @@ public class AnalyticsController : MonoBehaviour
         player.Date = date;
         string url = CreateURL(player.Php, player.GetData());
 
-        StartCoroutine(SendInfo(url));
+        StartCoroutine(SendInfo(url, player));
     }
 
     private string CreateURL(string php, string data)
@@ -44,20 +45,25 @@ public class AnalyticsController : MonoBehaviour
         return "https://citmalumnes.upc.es/~paulahm/" + php + data;
     }
 
-    private IEnumerator SendInfo(string url)
+    private IEnumerator SendInfo(string url, Player player)
     {
+        Debug.Log(url);
         WWW www = new WWW(url);
         yield return www;
-
+       
         if (www.text == "0")
         {
-            Debug.Log("User created successfully.");
+            Debug.Log("Error#");
         }
         else
         {
-            Debug.Log("User creation failed. Error #" + www.text);
+            Debug.Log("User created successfully" + www.text);
+
+            player.PlayerID = Int16.Parse(www.text);
+
         }
     }
+
     private void OnNewSession(DateTime obj)
     {
 
