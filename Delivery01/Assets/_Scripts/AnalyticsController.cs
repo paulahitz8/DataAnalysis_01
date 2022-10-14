@@ -18,9 +18,28 @@ public class Player
     }
 }
 
+[Serializable]
+public class Session
+{
+    public int PlayerID;
+    public DateTime SessionStart;
+    public DateTime SessionEnd;
+    public int SessionID;
+
+    public string Php = "Sessions.php";
+
+    public string GetData()
+    {
+        return "?PlayerID=" + PlayerID.ToString() + "&SessionStart=" + SessionStart.ToString("yyyy-MM-dd HH:mm:ss") + "&SessionEnd=" + SessionEnd.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+}
+
 
 public class AnalyticsController : MonoBehaviour
 {
+    public Player player;
+    public Session session;
+
     private void OnEnable()
     {
         Simulator.OnNewPlayer += OnNewPlayer;
@@ -31,13 +50,14 @@ public class AnalyticsController : MonoBehaviour
 
     private void OnNewPlayer(string name, string country, DateTime date)
     {
-        var player = new Player();
+        player = new Player();
         player.Name = name;
         player.Country = country;
         player.Date = date;
+
         string url = CreateURL(player.Php, player.GetData());
 
-        StartCoroutine(SendInfo(url, player));
+        StartCoroutine(SendPlayerInfo(url, player));
     }
 
     private string CreateURL(string php, string data)
@@ -45,7 +65,7 @@ public class AnalyticsController : MonoBehaviour
         return "https://citmalumnes.upc.es/~paulahm/" + php + data;
     }
 
-    private IEnumerator SendInfo(string url, Player player)
+    private IEnumerator SendPlayerInfo(string url, Player player)
     {
         Debug.Log(url);
         WWW www = new WWW(url);
@@ -61,12 +81,39 @@ public class AnalyticsController : MonoBehaviour
 
             player.PlayerID = Int16.Parse(www.text);
 
+            CallbackEvents.OnAddPlayerCallback?.Invoke((uint)player.PlayerID);
         }
     }
 
-    private void OnNewSession(DateTime obj)
+    private IEnumerator SendStartSessionInfo(string url, Session session)
     {
+        Debug.Log(url);
+        WWW www = new WWW(url);
+        yield return www;
 
+        if (www.text == "0")
+        {
+            Debug.Log("Error#");
+        }
+        else
+        {
+            Debug.Log("User created successfully" + www.text);
+
+            session.SessionID = Int16.Parse(www.text);
+
+            //CallbackEvents.OnAddPlayerCallback?.Invoke((uint)player.PlayerID);
+        }
+    }
+
+    private void OnNewSession(DateTime date)
+    {
+        session = new Session();
+        session.SessionStart = date;
+        session.PlayerID = player.PlayerID;
+
+        string url = CreateURL(session.Php, session.GetData());
+
+        StartCoroutine(SendStartSessionInfo(url, session));
     }
 
     private void OnEndSession(DateTime obj)
