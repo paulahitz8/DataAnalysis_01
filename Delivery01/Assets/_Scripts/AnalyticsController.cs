@@ -10,11 +10,27 @@ public class Player
     public string Country;
     public DateTime Date;
     public int PlayerID;
-    public string Php = "AddPlayer.php";
+    public string Php = "Players.php";
 
     public string GetData()
     {
         return "?Name=" + Name + "&Country=" + Country + "&Date=" + Date.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+}
+
+[Serializable]
+public class Item
+{
+    public int PlayerID;
+    public int SessionID;
+    public int ItemID;
+    public DateTime BuyDate;
+
+    public string Php = "Purchases.php";
+
+    public string GetData()
+    {
+        return "?PlayerID=" + PlayerID.ToString() + "&SessionID=" + SessionID.ToString() + "&ItemID=" + ItemID.ToString() + "&BuyDate=" + BuyDate.ToString("yyyy-MM-dd HH:mm:ss");
     }
 }
 
@@ -85,7 +101,7 @@ public class AnalyticsController : MonoBehaviour
         }
     }
 
-    private IEnumerator SendStartSessionInfo(string url, Session session)
+    private IEnumerator SendSessionInfo(string url, Session session)
     {
         Debug.Log(url);
         WWW www = new WWW(url);
@@ -97,11 +113,29 @@ public class AnalyticsController : MonoBehaviour
         }
         else
         {
-            Debug.Log("User created successfully" + www.text);
+            Debug.Log("Session created successfully" + www.text);
 
             session.SessionID = Int16.Parse(www.text);
 
-            //CallbackEvents.OnAddPlayerCallback?.Invoke((uint)player.PlayerID);
+            CallbackEvents.OnEndSessionCallback?.Invoke((uint)player.PlayerID);
+        }
+    }
+
+    private IEnumerator SendItemInfo(string url, Item item)
+    {
+        Debug.Log(url);
+        WWW www = new WWW(url);
+        yield return www;
+
+        if (www.text == "0")
+        {
+            Debug.Log("Error#");
+        }
+        else
+        {
+            Debug.Log("Item created successfully" + www.text);
+
+           CallbackEvents.OnItemBuyCallback?.Invoke();
         }
     }
 
@@ -111,19 +145,27 @@ public class AnalyticsController : MonoBehaviour
         session.SessionStart = date;
         session.PlayerID = player.PlayerID;
 
+        CallbackEvents.OnNewSessionCallback?.Invoke((uint)player.PlayerID);
+    }
+
+    private void OnEndSession(DateTime date)
+    {
+        session.SessionEnd = date;
+
         string url = CreateURL(session.Php, session.GetData());
-
-        StartCoroutine(SendStartSessionInfo(url, session));
+        StartCoroutine(SendSessionInfo(url, session));
     }
 
-    private void OnEndSession(DateTime obj)
+    private void OnBuyItem(int itemID, DateTime buyDate)
     {
+        Item item = new Item();
+        item.ItemID = itemID;
+        item.BuyDate = buyDate;
+        item.PlayerID = player.PlayerID;
+        item.SessionID = session.SessionID;
 
-    }
-
-    private void OnBuyItem(int arg1, DateTime arg2)
-    {
-
+        string url = CreateURL(item.Php, item.GetData());
+        StartCoroutine(SendItemInfo(url, item));
     }
 
 }

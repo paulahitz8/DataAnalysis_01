@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxPlayers: 100
-  BuyProbability: 0.1
+  BuyProbability: 1
   namegen: {fileID: 1280703613}
 --- !u!4 &445130836
 Transform:
@@ -417,6 +417,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f51f78f66168d5c4fa865204cd723634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player:
+    Name: 
+    Country: 
+    PlayerID: 0
+    Php: AddPlayer.php
+  session:
+    PlayerID: 0
+    SessionID: 0
+    Php: Sessions.php
 --- !u!4 &1418363395
 Transform:
   m_ObjectHideFlags: 0
