@@ -4,9 +4,7 @@ $username = "paulahm";
 $password = "Q3XqC6eBG6";
 $dataBase = "paulahm";
 
-$PlayerID = $_GET["PlayerID"];
-$SessionStart = $_GET["SessionStart"];
-$SessionEnd = $_GET["SessionEnd"];
+$onNewSession = $_REQUEST["onNewSession"];
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dataBase);
@@ -16,13 +14,26 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "INSERT INTO Sessions (PlayerID, SessionStart, SessionEnd)
-VALUES ('$PlayerID', '$SessionStart', '$SessionEnd')";
+if ($onNewSession) {
+  $PlayerID = $_GET["PlayerID"];
+  $SessionStart = $_GET["SessionStart"];
+  $sql = "INSERT INTO Sessions (PlayerID, SessionStart)
+  VALUES ('$PlayerID', '$SessionStart', '$SessionEnd')";
+}
+else {
+  $SessionID = $_GET["SessionID"];
+  $SessionEnd = $_GET["SessionEnd"];
+  $sql = "UPDATE Sessions SET SessionEnd='$SessionEnd' 
+  WHERE SessionID='$SessionID' and PlayerID='$PlayerID'";
+}
 
 if ($conn->query($sql) === TRUE) {
-   $last_id = $conn->insert_id;
-  echo "" . $last_id;
-} else {
+  if ($onNewSession) {
+    $last_id = $conn->insert_id;
+    echo "" . $last_id;
+  }
+} 
+else {
   echo "Error: " . $sql . "<br>" . $conn->error;
 }
 
