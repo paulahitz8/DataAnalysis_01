@@ -1,3 +1,4 @@
+create view MAUperDay as 
 select date(dates.date) as "Date", count(distinct PlayerID) "MAU"
 from dates
 left join Sessions

@@ -1,3 +1,4 @@
+-- create view DAUperDay as --
 select date(dates.date) as "Date", 
 count(distinct Sessions.PlayerID) as "Dau"
 from Sessions
