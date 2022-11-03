@@ -4,10 +4,6 @@ $username = "paulahm";
 $password = "Q3XqC6eBG6";
 $dataBase = "paulahm";
 
-$Name = mysqli_real_escape_string($conn, $_POST["Name"]);
-$Country = $_GET["Country"];
-$Date = $_GET["Date"];
-
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dataBase);
 
@@ -15,6 +11,10 @@ $conn = mysqli_connect($servername, $username, $password, $dataBase);
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
+
+$Name = mysqli_real_escape_string($conn,$_GET["Name"]);
+$Country = $_GET["Country"];
+$Date = $_GET["Date"];
 
 $sql = "INSERT INTO Players (Name, Country, Date)
 VALUES ('$Name', '$Country', '$Date')";

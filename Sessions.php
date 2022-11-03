@@ -4,7 +4,7 @@ $username = "paulahm";
 $password = "Q3XqC6eBG6";
 $dataBase = "paulahm";
 
-$onNewSession = $_REQUEST["onNewSession"];
+$OnNewSession = $_REQUEST["OnNewSession"];
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dataBase);
@@ -14,21 +14,21 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-if ($onNewSession) {
+if ($OnNewSession) {
   $PlayerID = $_GET["PlayerID"];
   $SessionStart = $_GET["SessionStart"];
   $sql = "INSERT INTO Sessions (PlayerID, SessionStart)
-  VALUES ('$PlayerID', '$SessionStart', '$SessionEnd')";
+  VALUES ('$PlayerID', '$SessionStart')";
 }
 else {
   $SessionID = $_GET["SessionID"];
   $SessionEnd = $_GET["SessionEnd"];
   $sql = "UPDATE Sessions SET SessionEnd='$SessionEnd' 
-  WHERE SessionID='$SessionID' and PlayerID='$PlayerID'";
+  WHERE SessionID='$SessionID'";
 }
 
 if ($conn->query($sql) === TRUE) {
-  if ($onNewSession) {
+  if ($OnNewSession) {
     $last_id = $conn->insert_id;
     echo "" . $last_id;
   }

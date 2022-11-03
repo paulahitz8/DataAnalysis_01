@@ -25,18 +25,17 @@ public class Session
     public DateTime SessionStart;
     public DateTime SessionEnd;
     public int SessionID;
-    public bool onNewSession;
 
     public string Php = "Sessions.php";
 
     public string GetDataStart()
     {
-        return "?PlayerID=" + PlayerID.ToString() + "&SessionStart=" + SessionStart.ToString("yyyy-MM-dd HH:mm:ss") + "&onNewSession=" + onNewSession.ToString();
+        return "?OnNewSession=" + "1" + "&SessionStart=" + SessionStart.ToString("yyyy-MM-dd HH:mm:ss") + "&PlayerID=" + PlayerID.ToString();
     }
 
     public string GetDataEnd()
     {
-        return "?SessionID=" + SessionID.ToString() + "&SessionEnd=" + SessionEnd.ToString("yyyy-MM-dd HH:mm:ss") + "&onNewSession=" + onNewSession.ToString();
+        return "?OnNewSession=" + "0" + "&SessionEnd=" + SessionEnd.ToString("yyyy-MM-dd HH:mm:ss") + "&SessionID=" + SessionID.ToString();
     }
 }
 
@@ -169,7 +168,6 @@ public class AnalyticsController : MonoBehaviour
         session = new Session();
         session.SessionStart = date;
         session.PlayerID = player.PlayerID;
-        session.onNewSession = true;
 
         string url = CreateURL(session.Php, session.GetDataStart());
         StartCoroutine(SendSessionStartInfo(url, session));
@@ -178,7 +176,6 @@ public class AnalyticsController : MonoBehaviour
     private void OnEndSession(DateTime date)
     {
         session.SessionEnd = date;
-        session.onNewSession = false;
 
         string url = CreateURL(session.Php, session.GetDataEnd());
         StartCoroutine(SendSessionEndInfo(url, session));
