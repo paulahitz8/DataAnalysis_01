@@ -9,4 +9,3 @@ join Items
 on Purchases.ItemID = Items.ItemID
 group by 1 
 order by 4
-
