@@ -1,5 +1,0 @@
-dos php, session start y session end 
-
-dos php en una tabla sessions 
-
-en session end php hacer el update
