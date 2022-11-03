@@ -4,7 +4,7 @@ $username = "paulahm";
 $password = "Q3XqC6eBG6";
 $dataBase = "paulahm";
 
-$Name = $_GET["Name"];
+$Name = mysqli_real_escape_string($conn, $_POST["Name"]);
 $Country = $_GET["Country"];
 $Date = $_GET["Date"];
 
