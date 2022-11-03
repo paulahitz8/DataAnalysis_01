@@ -1,6 +1,6 @@
 select Players.Country,
 sum(Items.Price) as "Revenue",
-count(distinct Purchases.PlayerID) as "Total Players",
+count(distinct Players.PlayerID) as "Total Players",
 sum(Items.Price)/count(distinct Purchases.PlayerID) as "ARPU"
 from Players
 left join Purchases 
