@@ -1,0 +1,1 @@
+SELECT * FROM paulahm.DAUperDay;
